@@ -1,8 +1,10 @@
-#prova per tirare fuori il file salvato di goodreads
 
-import csv
 import pandas as pd 
-import sqlite3
+import requests 
+import csv
+import time
+from SPARQLWrapper import SPARQLWrapper, JSON
+
 
 
 
@@ -14,13 +16,12 @@ books = pd.read_csv(("Goodreads_books_with_genres.csv"))
 #dropping the NaN
 #dropping the duplicates
 
-#books.fillna('')
-
+books.replace(['', 'None', 'N/A', 'null', ' '], pd.NA, inplace=True)
+books = books.dropna()
 books.info()
 
-books.drop_duplicates()
 
-books.dropna(inplace=True)
+books.drop_duplicates()
 
 books.select_dtypes(include='object')
 
@@ -29,25 +30,28 @@ books.select_dtypes(include='object')
 # 1. putting spaces in between words
 # 2. separating the genres with a comma instead of a semicolon 
 
+
 books['genres'] = books['genres'].str.split(";")#.str.join(", ").str.replace(" ' ", "")
 books['genres']
 
-#converting the 'objects' into either str
+
+
+#converting the 'objects' into either str or int,
 
 strings = ['Title', 'Author', 'isbn', 'language_code', 'publisher']
 for n in strings:
     books[n] = books[n].fillna('').astype(str).str.strip()
 
 
-
-
 #making a list of the columns i want to drop and dropping them
-col_drop = ["ratings_count", "text_reviews_count"]
+col_drop = ["ratings_count", "text_reviews_count", "average_rating"]
 books = books.drop(columns=col_drop, axis=1)
 
+#separating the strings of the authors names to facilitate the search
 
-
-#books.loc[books['publisher'] == 'Bantam Books']
+books['Author'] = books['Author'].str.replace('/', ' / ')  # putting spaces around the slash
+books['Author'] = books['Author'].str.replace(r'\s+', ' ', regex=True)  # replacing eventual multiple spaces with a single space
+books['Author'] = books['Author'].str.strip()
 
 #converting the date format into a standard one --> then making the object into a datatime
 
@@ -66,7 +70,6 @@ books['publication_date'] = books['publication_date'].replace('6-31-1982', '6-30
 
 
 books['publication_date'] = pd.to_datetime(books['publication_date'])
-#books['publication_date'] = pd.to_datetime(books['publication_date'], format='%m-%d-%Y')
 
 print(books['publication_date'].dtype)
 
@@ -91,15 +94,13 @@ fantasy_books = books[books['genres'].apply(lambda x: 'Fantasy' in x)].copy()
 
 genres = []
 subgenres = []
-#ran = False
+
 
 
 for genre in fantasy_books['genres']: 
-    if 'Fantasy' in genre: #and not ran:
+    if 'Fantasy' in genre: 
         genres.append('Fantasy')
         subgenres.append([x for x in genre if x != 'Fantasy'])
-        #break 
-        #ran = True
     else:
         genres.append(genre) #trying to stop the loop if the conditions of the first statement are already met
         subgenres.append([]) 
@@ -115,70 +116,30 @@ print(fantasy_books)
 #saving the sliced dataframe in a new csv file. 
 fantasy_books.to_csv('fantasybooks.csv', index=False, encoding='utf-8')
 
-#print(fantasy_books[fantasy_books['Author'] == 'Stephanie Garber']) 
-#print(fant)
-
-
-
-#ALTERNATIVE TO THE LOOP (doesn't really work)
-
-#def genres_subgenres(row): 
-
- #   for genre in fantasy_books['genres']:
-  #      if 'Fantasy' in genre: 
-   #         row['sub_genres'] = [x for x in row['genres'] if x != 'Fantasy']
-    #        row['genres'] = 'Fantasy' 
-           
-     #   return row 
-
-
-
-#fantasy_books = fantasy_books.apply(genres_subgenres, axis = 1) 
 
 
 
 
-#starting the database with sqlite --> FIRST TRY, STILL NEED TO TEST IT
-#ALSO MISSING: PERSON TABLE, PUBLISHING HOUSE TABLE, AUTHOR TABLE (linked to the person table), 
-#evtl. a Saga table (if it makes sense to do one?)
 
 
 
-fant = pd.read_csv(("fantasybooks.csv"))
-print(fant)
-#fantasy_db = squlite3.connect('fantasy_database.db')
 
 
-#fantasy_db.execute('''
-#CREATE TABLE IF NOT EXISTS books (
- #  Id INTEGER PRIMARY KEY AUTOINCREMENT,
-  # BookID INT NOT NULL,
-   #ISBN INT NOT NULL,
-   #ISBN13 INT NOT NULL,
-   #Title TEXT,
-   #Author TEXT,
-   #Language TEXT,
-   #PublicationDate DATE,
-   #Publisher TEXT, 
-   #Genre TEXT, 
-   #Subgenres TEXT
-#);
-#''')
 
 
-#for book in fant:
- #   fantID = fant["Book Id"] 
-  #  fantisbn = fant["isbn"]
-   # fantisbn13 = fant["isbn13"]
-    #fant_title = fant["Title"]
-    #fantAuthor = fant["Author"]
-    #fantlangu = fant["language_code"]
-    #fantpubldate = fant["publication_date"]
-    #fantpubl = fant["publisher"]
-    #fantgenres = fant["genres"]
-    #fantsubgenres = fant["sub_genres"]
-#fantasy_db.execute('INSERT INTO books (fantID,fantisbn, fantisbn13, fan_title, fantAuthor,
-#  fantlangu, fantpubldate, fantpubl, fantgenres, fantsubgenres) VALUES (?,?,?,?,?,?,?,?,?,?)',
- #          (fantID,fantisbn, fantisbn13, fan_title, fantAuthor, fantlangu, fantpubldate, fantpubl, fantgenres, fantsubgenres))
 
-#fantasy_db.commit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
