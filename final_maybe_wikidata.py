@@ -37,7 +37,7 @@ print(fantasy_ex)
 def querying_wikidata(name):
     
     url = 'https://query.wikidata.org/sparql' #giving the sparql url for wikidata 
-    name_econding = urllib.parse.quote(name)
+    
     #writing the sparql query, where i chose the information i would like to extract, alongside with the prefixes 
     #that can be found in the wikiinfo page
     sparql_query = f"""
@@ -65,6 +65,7 @@ def querying_wikidata(name):
 
 #dropping the duplicates of authors
 unique_authors = fantasy_ex['Author'].drop_duplicates()
+
 #creating and empty dictionary 
 author_results = {}
 #looping through the unique authors and calling the function 
@@ -73,13 +74,68 @@ for author in unique_authors:
     if result: 
         author_results[author] = result
         print(f"Result for {author}: {result}")
-    time.sleep(2)
+    time.sleep(1)
 
 
 
-#finally converting the dictionary into a new dataframe which will then be merged. 
 
-final_author_info_df = pd.DataFrame.from_dict(author_results, orient='index')
+#organize the dictionary into a clean dataframe 
+
+#preparing an empty list
+cleaned_dict = []
+
+#looping trough the author and the results that are contained into the wikidata dictionary
+for author, result in author_results.items(): 
+    try:
+        bindings = result['results']['bindings']
+        if bindings: #organizing the structure that i would like to unpack from the dictionary
+            binding = bindings[0]
+            person_label = binding.get('personLabel', {}).get('value', None) #setting the label for the person, through the values scraped
+            person_uri = binding.get('person', {}).get('value', None) #doing the same thing with the person's link, date of birth and nationality 
+            dob = binding.get('dob', {}).get('value', None)
+            nationality = binding.get('nationalityLabel', {}).get('value', None)
+            
+            #adding the data into the empty list already prepared, making each value correspond with the results gotten from the wikidata scraping
+            cleaned_dict.append({
+                'Name': person_label,
+                'Person URI': person_uri,
+                'Label': person_label,
+                'DOB': dob,
+                'Nationality': nationality
+            })
+    except Exception as e:
+        print(f"Error processing data for {author}: {e}")
+
+
+#now converting the data into a dataframe, it will make the merging with the main dataframe easier.
+final_author_info = pd.DataFrame(cleaned_dict)
+final_author_info
+
+#saving it to a separate dataframe just in case 
+#final_author_info.to_csv('Author_info_final.csv',encoding='utf-8', index=False)
+
+
+#merging the two dataframes 
+
+merged_final_f = fantasy_ex.merge(
+    final_author_info,
+    left_on='Author',
+    right_on= 'Name',
+    how='inner'
+)
+
+print(merged_final_f)
+
+
+
+#saving the merged and final dataframe into a csv file 
+
+
+merged_final_f.to_csv('Final_fantasy_dataframe.csv', encoding=' utf-8')
+
+#final_fant = pd.read_csv(('Final_fantasy_dataframe.csv'))
+
+
 
 
 
