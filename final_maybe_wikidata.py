@@ -15,13 +15,13 @@ fantasy = pd.read_csv('fantasybooks.csv')
 
 #cleaning the strings and putting the authors into lists
 
-fantasy['Author'] = fantasy['Author'].str.replace(r'(\w)\.(?=\w)', r'\1. ', regex=True) #with this in particular, i'm  basically splitting the letters that are separated by a period and have no space in between 
+fantasy['Author'] = fantasy['Author'].str.replace(r'(\w)\.(?=\w)', r'\1. ', regex=True) #splitting the characters that are separated by a period and have no space in between (ex. J.K. Rowling)  
 fantasy['Author'] = fantasy['Author'].str.replace('/', ' / ')
 fantasy['Author'] = fantasy['Author'].str.replace(r'\s+', ' ', regex=True)
 fantasy['Author'] = fantasy['Author'].str.strip()
-fantasy['Author'] = fantasy['Author'].str.split(" / ")
+fantasy['Author'] = fantasy['Author'].str.split(" / ") #so that the authors are in a list and not a single string
 
-#splitting the authors in the lists so that each string has a row for itself
+#exploding the authors column so that each string has a row for itself
 
 fantasy_ex = fantasy.explode("Author")
 
