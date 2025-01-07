@@ -1,10 +1,9 @@
 import pandas as pd 
-import numpy as np
 import requests 
 import csv
 import time
 from SPARQLWrapper import SPARQLWrapper, JSON
-import urllib.parse
+
 
 
 
@@ -86,10 +85,10 @@ cleaned_dict = []
 
 #looping trough the author and the results that are contained into the wikidata dictionary
 for author, result in author_results.items(): 
-    try:
+    try: #since its a nested dictionary, with 'binding' as the key, trying to get the info from the results and then from the bindings inside. 
         bindings = result['results']['bindings']
         if bindings: #organizing the structure that i would like to unpack from the dictionary
-            binding = bindings[0]
+            binding = bindings[0] #first element of the dict
             person_label = binding.get('personLabel', {}).get('value', None) #setting the label for the person, through the values scraped
             person_uri = binding.get('person', {}).get('value', None) #doing the same thing with the person's link, date of birth and nationality 
             dob = binding.get('dob', {}).get('value', None)
@@ -103,7 +102,7 @@ for author, result in author_results.items():
                 'DOB': dob,
                 'Nationality': nationality
             })
-    except Exception as e:
+    except Exception as e: #rising an Error message if some problems occur
         print(f"Error processing data for {author}: {e}")
 
 
@@ -116,7 +115,7 @@ final_author_info
 
 
 #merging the two dataframes 
-
+#taking the exploded dataframe as primary df, then giving the parameters for the second df i would like to merge
 merged_final_f = fantasy_ex.merge(
     final_author_info,
     left_on='Author',
