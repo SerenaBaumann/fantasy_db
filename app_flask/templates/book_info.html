@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %} {{book_inform.booktitle}} {% endblock %}
+
+
+{%block content%}
+<div class="container mt-4" style="margin-top: 40 px; margin-bottom: 80px;">
+    <h2 class="text-white">{{ book_inform.booktitle }}</h2>
+    <div class="card p-3 shadow-sm">
+    <p><strong>Author:</strong> 
+        <a href="{{ url_for('author_infor', authorname =book_inform.bookauthor) }}"> 
+            {{ book_inform.bookauthor }}
+        </a>
+    </p>
+    <p><strong>Publishing House:</strong> 
+        <a href="{{url_for('pub_info', publishinghouse= book_inform.pubhouse)}}">
+            {{ book_inform.pubhouse }}
+        </a>
+    </p>
+    <p><strong>Publishing Date:</strong> {{ book_inform.pubdate }}</p>
+    <p><strong>ISBN:</strong> {{ book_inform.isbn }}</p>
+    <p><strong>Language:</strong> {{ book_inform.language }}</p>
+    <p><strong>Subgenre(s):</strong> 
+        <a href = "{{ url_for('subgen_books', sg_name = book_inform.subgenre|join(', ') )}}">
+            {{ book_inform.subgenre|join(', ') }}</p>
+        </a>
+    </div>
+    <a href="{{ url_for('all_books') }}" class="btn btn-primary">Back to List</a>
+</div>
+{% endblock %}
+
+
