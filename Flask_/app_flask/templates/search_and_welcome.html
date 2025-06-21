@@ -1,0 +1,14 @@
+{%extends "base.html"%}
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h1 class="mb-4">Welcome to the Fantasy Book Database</h1>
+    
+    <form action="{{ url_for('search') }}" method="GET" class="d-flex justify-content-center">
+        <input type="text" name="query" class="form-control w-50 me-2" placeholder="Search for a book, author, etc.">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+{% endblock %}

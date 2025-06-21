@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 text-center">
+    <h1 class="mb-4">Welcome to the Fantasy Book Database</h1>
+
+
+
+
+
+
+<form action="{{ url_for('search') }}" method="GET" class="d-flex justify-content-center flex-column align-items-center">
+
+  <div class="d-flex mb-3">
+    <input type="text" name="q" value="{{ q }}" class="form-control me-2" placeholder="Search for a book, author, etc.">
+    <button type="submit" class="btn btn-primary">
+      <i class="fas fa-search"></i> Search
+    </button>
+    <button class="btn btn-primary ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#advanced_search" aria-expanded="false" aria-controls="advanced_search">
+      Advanced Search
+    </button>
+  </div>
+
+  <div class="collapse w-100" id="advanced_search">
+    <div class="card card-body">
+      <!-- Your checkbox lists here -->
+      <h5>Subgenres</h5>
+      <ul class="list-group mb-3">
+        {% for sg in all_sg %}
+          <li class="list-group-item">
+            <input class="form-check-input me-1" type="checkbox" value="{{ sg }}" name="subgenres[]" id="subgenre-{{ loop.index }}">
+            <label class="form-check-label stretched-link" for="subgenre-{{ loop.index }}">{{ sg }}</label>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <h5>Authors</h5>
+      <ul class="list-group mb-3">
+        {% for a in all_authors %}
+          <li class="list-group-item">
+            <input class="form-check-input me-1" type="checkbox" value="{{ a }}" name="authors[]" id="author-{{ loop.index }}">
+            <label class="form-check-label stretched-link" for="author-{{ loop.index }}">{{ a }}</label>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <h5>Publishing Houses</h5>
+      <ul class="list-group mb-3">
+        {% for ph in all_ph %}
+          <li class="list-group-item">
+            <input class="form-check-input me-1" type="checkbox" value="{{ ph }}" name="publishing_houses[]" id="ph-{{ loop.index }}">
+            <label class="form-check-label stretched-link" for="ph-{{ loop.index }}">{{ ph }}</label>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <button type="submit" class="btn btn-success">Search</button>
+    </div>
+  </div>
+</form>
+</div>
+{% endblock %}
