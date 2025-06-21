@@ -1,0 +1,13 @@
+.env
+.venv
+
+
+
+.venv/
+ 
+FLASK_/.venv
+
+
+
+ __pychache__/
+*.pyc
