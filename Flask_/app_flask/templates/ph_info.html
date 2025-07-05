@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %} {{ph_information}} {% endblock %}
+
+
+{%block content%}
+<div class="container mt-4">
+    
+    
+
+    <h2 class="text-white">{{ ph_information }}'s Books:</h2>
+    
+        <ul class="list-group">
+            {% for book_id, book in ph_book_titles %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('book_info', book_id = book_id) }}">
+                        {{ book.booktitle }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    <a href="{{ url_for('all_ph_function') }}" class="btn btn-primary">Back to List</a>
+</div>
+{% endblock %}
