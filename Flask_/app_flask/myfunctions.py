@@ -140,7 +140,7 @@ class Book:
                                    "children", "comix", "book club", "books about books", "self help", "role playing games", "chapter books", 
                                    "fantasy of manners", "retelling", "mental health", "own", "gay", "media tie in", "regency", "health", 
                                    "growth mindset", "reference", "lds", "lds fiction", "rabbits", "komik", "read for school"]
-            b.subgenre = [sg.strip() for sg in b.subgenre if sg.strip().lower() != unnecessary_subgenr]
+            b.subgenre = [sg.strip() for sg in b.subgenre if sg.strip().lower() not in unnecessary_subgenr]
 
 #functions to retrieve the book data from the API response
 
