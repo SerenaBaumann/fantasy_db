@@ -56,6 +56,7 @@ def home():
 def search():
     query = request.args.get('q', '').strip().lower()
     results = []
+    no_results_message= None 
     if query:
         for book_id, book in all_books_class.items(): 
             title = (book.booktitle or '').lower()
@@ -69,9 +70,11 @@ def search():
             if query in title or query in author or query in publishing or query in subgenre:
                 results.append((book_id, book))
 
-                #no_results_message= "Sorry, there are no books matching your search query 🥲"
+        if query is not results:
+
+                no_results_message= "Sorry, there are no books matching your search query 🥲"
                 
-    return render_template("home.html", results = results, q=query)
+    return render_template("home.html", results = results, q=query, no_results_message=no_results_message)
 
 
 
