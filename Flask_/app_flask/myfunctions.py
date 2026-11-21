@@ -22,7 +22,7 @@ def get_api_books():
     #try: 
 
     request1 = requests.get(NG_API_URL_Books, headers = {"Content-Type": "application/json", 
-                                                             "Authorization": f'Bearer {API_KEY}'})
+                                                             "Authorization": f'Bearer {API_KEY}'}, params={"limit": 0})
        # request1.raise_for_status()        
     json_data_books = request1.json()
 
@@ -47,7 +47,7 @@ def get_api_books():
 def get_api_authors():
 
     NG_API_URL_Authors = os.getenv("NG_API_URL_Authors")
-    request2 = requests.get(NG_API_URL_Authors, headers = {"Content-Type": "application/json", "Authorization": f'Bearer {API_KEY}'})
+    request2 = requests.get(NG_API_URL_Authors, headers = {"Content-Type": "application/json", "Authorization": f'Bearer {API_KEY}'}, params={"limit": 0})
     json_data_authors = request2.json()
 
     return json_data_authors
@@ -57,7 +57,7 @@ def get_api_ph():
     
     NG_API_URL_Pubhouse = os.getenv("NG_API_URL_Pubhouse")
 
-    request3 = requests.get(NG_API_URL_Pubhouse, headers = {"Content-Type": "application/json", "Authorization": f'Bearer {API_KEY}'})
+    request3 = requests.get(NG_API_URL_Pubhouse, headers = {"Content-Type": "application/json", "Authorization": f'Bearer {API_KEY}'}, params={"limit": 0})
     json_data_ph = request3.json()
 
     return json_data_ph
